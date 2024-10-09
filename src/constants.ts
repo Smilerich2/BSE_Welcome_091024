@@ -25,3 +25,6 @@ export const buttons: Button[] = [
 ];
 
 export const CORRECT_PIN = '1254';
+
+export const MESSAGE_PIN = '1254';
+export const MINIMIZE_PIN = '4321';

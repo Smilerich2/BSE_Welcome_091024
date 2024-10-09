@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CORRECT_PIN } from '../constants';
+import { MESSAGE_PIN } from '../constants';
 
 interface MessageInputProps {
   onClose: () => void;
@@ -13,7 +13,7 @@ const MessageInput: React.FC<MessageInputProps> = ({ onClose, onMessageSubmit })
 
   const handlePinSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (pin === CORRECT_PIN) {
+    if (pin === MESSAGE_PIN) {
       setIsPinCorrect(true);
     } else {
       alert('Falsche PIN!');
@@ -94,6 +94,64 @@ const MessageInput: React.FC<MessageInputProps> = ({ onClose, onMessageSubmit })
             </form>
           </>
         )}
+      </div>
+    </div>
+  );
+};
+
+interface PinInputProps {
+  onClose: () => void;
+  onPinSubmit: (isCorrect: boolean) => void;
+  correctPin: string;
+}
+
+export const PinInput: React.FC<PinInputProps> = ({ onClose, onPinSubmit, correctPin }) => {
+  const [pin, setPin] = useState('');
+
+  const handlePinSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const isCorrect = pin === correctPin;
+    onPinSubmit(isCorrect);
+    if (!isCorrect) {
+      setPin('');
+    }
+  };
+
+  return (
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-lg shadow-xl max-w-md w-full p-6"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h2 className="text-2xl font-bold mb-4">PIN eingeben</h2>
+        <form onSubmit={handlePinSubmit}>
+          <input
+            type="password"
+            placeholder="PIN eingeben"
+            value={pin}
+            onChange={(e) => setPin(e.target.value)}
+            className="w-full p-2 mb-4 border rounded"
+            maxLength={4}
+          />
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={onClose}
+              className="mr-2 px-4 py-2 bg-gray-300 rounded"
+            >
+              Abbrechen
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-500 text-white rounded"
+            >
+              Bestätigen
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
