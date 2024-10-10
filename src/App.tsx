@@ -18,6 +18,7 @@ const App: React.FC = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showMessageInput, setShowMessageInput] = useState(false);
   const [message, setMessage] = useState('');
+  const [showFloorPlan, setShowFloorPlan] = useState(false);
 
   useEffect(() => {
     const savedMessage = localStorage.getItem('welcomeMessage');
@@ -58,18 +59,35 @@ const App: React.FC = () => {
 
   const handleButtonClick = useCallback((button: Button) => {
     if (button.name === 'Raumplan') {
-      setOverlayType('floorplan');
+      setShowFloorPlan(true);
     } else if (button.url) {
       setOverlayContent(button.url);
       setOverlayType('iframe');
+      setShowOverlay(true);
     } else {
       setOverlayType('contact');
+      setShowOverlay(true);
     }
-    setShowOverlay(true);
   }, []);
 
+  useEffect(() => {
+    const handleResize = () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  if (showFloorPlan) {
+    return <FloorPlan onClose={() => setShowFloorPlan(false)} />;
+  }
+
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div className="min-h-screen h-screen relative overflow-hidden" style={{ height: 'calc(var(--vh, 1vh) * 100)' }}>
       <BackgroundVideo background={background} />
 
       <button
@@ -150,7 +168,7 @@ const App: React.FC = () => {
             content={overlayContent}
             onClose={() => setShowOverlay(false)}
           >
-            {overlayType === 'floorplan' && <FloorPlan />}
+            {overlayType === 'floorplan' && <FloorPlan onClose={() => {}} />}
           </Overlay>
         )}
 
